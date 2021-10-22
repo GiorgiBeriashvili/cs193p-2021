@@ -9,10 +9,10 @@ import Foundation
 
 struct MemoryGame<CardContent: Equatable> {
     struct Card: Identifiable {
-        var id: Int
-        var content: CardContent
-        var isFaceUp: Bool = false
-        var isMatched: Bool = false
+        let id: Int
+        let content: CardContent
+        var isFaceUp = false
+        var isMatched = false
         var isPreviouslySeen = false
         var seenDate: Date?
     }
@@ -20,10 +20,13 @@ struct MemoryGame<CardContent: Equatable> {
     private(set) var cards: [Card]
     private(set) var score = 0
     
-    private var indexOfTheOneAndOnlyFaceUpCard: Int?
+    private var indexOfTheOneAndOnlyFaceUpCard: Int? {
+        get { cards.indices.filter { cards[$0].isFaceUp }.oneAndOnly }
+        set { cards.indices.forEach { cards[$0].isFaceUp = ($0 == newValue) } }
+    }
     
     init(numberOfPairsOfCards: Int, createCardContent: (Int) -> CardContent) {
-        cards = [Card]()
+        cards = []
         
         for pairIndex in 0..<numberOfPairsOfCards {
             let content = createCardContent(pairIndex)
@@ -52,33 +55,28 @@ struct MemoryGame<CardContent: Equatable> {
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
                     
-                    score += min(
+                    score += max(
                         max(10 - timeSinceLastSeen(of: cards[chosenIndex]), 2),
                         max(10 - timeSinceLastSeen(of: cards[potentialMatchIndex]), 2)
                     )
                 } else {
                     if cards[chosenIndex].isPreviouslySeen {
-                        score -= max(10 - timeSinceLastSeen(of: cards[chosenIndex]), 1)
+                        score -= min(timeSinceLastSeen(of: cards[chosenIndex]), 10)
                     }
                     
                     if cards[potentialMatchIndex].isPreviouslySeen {
-                        score -= max(10 - timeSinceLastSeen(of: cards[chosenIndex]), 1)
+                        score -= min(timeSinceLastSeen(of: cards[chosenIndex]), 10)
                     }
                     
                     cards[chosenIndex].isPreviouslySeen = true
                     cards[potentialMatchIndex].isPreviouslySeen = true
                 }
                 
-                indexOfTheOneAndOnlyFaceUpCard = nil
+                cards[chosenIndex].isFaceUp = true
             } else {
-                for index in cards.indices {
-                    cards[index].isFaceUp = false
-                }
-                
                 indexOfTheOneAndOnlyFaceUpCard = chosenIndex
             }
             
-            cards[chosenIndex].isFaceUp.toggle()
             cards[chosenIndex].seenDate = Date.now
         }
     }

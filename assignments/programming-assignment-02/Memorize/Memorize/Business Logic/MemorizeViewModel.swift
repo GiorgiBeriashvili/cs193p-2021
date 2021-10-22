@@ -1,5 +1,5 @@
 //
-//  EmojiMemoryGame.swift
+//  MemorizeViewModel.swift
 //  Memorize
 //
 //  Created by Giorgi Beriashvili on 19.09.21.
@@ -7,10 +7,10 @@
 
 import SwiftUI
 
-typealias Model = MemoryGame<String>
-typealias Theme = MemoryGame<String>.Theme<String>
-
 extension MemorizeView {
+    typealias Model = MemoryGame<String>
+    typealias Theme = MemoryGame<String>.Theme<String>
+    
     class ViewModel: ObservableObject {
         @Published private(set) var model: Model
         @Published private(set) var theme: Theme
@@ -53,12 +53,12 @@ extension MemorizeView {
             model = configuration.model
         }
         
-        func choose(_ card: MemoryGame<String>.Card) { model.choose(card) }
+        func choose(_ card: Model.Card) { model.choose(card) }
     }
 }
 
 extension MemorizeView.ViewModel {
-    private static func makeConfiguration(from emojiTheme: EmojiTheme) -> (theme: Theme, model: Model) {
+    private static func makeConfiguration(from emojiTheme: EmojiTheme) -> (theme: MemorizeView.Theme, model: MemorizeView.Model) {
         let theme = emojiTheme.makeTheme()
         let model = MemoryGame(numberOfPairsOfCards: theme.numberOfPairsOfCards) {
             pairIndex in Array(theme.emojis)[pairIndex]
@@ -75,43 +75,43 @@ extension MemorizeView.ViewModel {
         case vehicles
         case pictographs
         
-        func makeTheme() -> Theme {
+        func makeTheme() -> MemorizeView.Theme {
             let emojiSet: Set<String>
             
             switch self {
             case .animals:
                 emojiSet = ["🐶", "🐱"]
                 
-                return Theme(name: "Animals", emojis: emojiSet, numberOfPairsOfCards: 12, color: "blue-purple")
+                return MemorizeView.Theme(name: "Animals", emojis: emojiSet, numberOfPairsOfCards: 12, color: "blue-purple")
             case .hearts:
                 emojiSet = ["❤️", "🧡", "💛", "💚"]
                 
-                return Theme(name: "Hearts", emojis: emojiSet, numberOfPairsOfCards: 6, color: "yellow")
+                return MemorizeView.Theme(name: "Hearts", emojis: emojiSet, numberOfPairsOfCards: 6, color: "yellow")
             case .pictographs:
                 emojiSet = ["☀︎", "☼", "☽", "☾", "☁︎", "☂︎"]
                 
-                return Theme(name: "Pictographs", emojis: emojiSet, numberOfPairsOfCards: Int.random(in: 1..<emojiSet.count), color: "purple")
+                return MemorizeView.Theme(name: "Pictographs", emojis: emojiSet, numberOfPairsOfCards: Int.random(in: 1..<emojiSet.count), color: "purple")
             case .foods:
                 emojiSet = [
                     "🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🫐", "🍈", "🍒",
                     "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶",
                 ]
                 
-                return Theme(name: "Foods", emojis: emojiSet, numberOfPairsOfCards: 3, color: "yellow-red")
+                return MemorizeView.Theme(name: "Foods", emojis: emojiSet, numberOfPairsOfCards: 3, color: "yellow-red")
             case .objects:
                 emojiSet = [
                     "⌚️", "📱", "📲", "💻", "⌨️", "🖥", "🖨", "🖱", "🖲", "🕹", "🗜", "💽",
                     "💾", "💿", "📀", "📼", "📷", "📸", "📹", "🎥", "📽", "🎞", "📞", "☎️",
                 ]
                 
-                return Theme(name: "Objects", emojis: emojiSet, numberOfPairsOfCards: 6, color: "red")
+                return MemorizeView.Theme(name: "Objects", emojis: emojiSet, numberOfPairsOfCards: 6, color: "red")
             case .vehicles:
                 emojiSet = [
                     "🚗", "🚕", "🚙", "🚌", "🚎", "🏎", "🚓", "🚑", "🚒", "🚐", "🛻", "🚚",
                     "🚛", "🚜", "🛴", "🚲", "🛵", "🏍", "🛺", "🚂", "🚀", "🛸", "🚁", "🛶",
                 ]
                 
-                return Theme(name: "Vehicles", emojis: emojiSet, color: "orange")
+                return MemorizeView.Theme(name: "Vehicles", emojis: emojiSet, color: "orange")
             }
         }
     }

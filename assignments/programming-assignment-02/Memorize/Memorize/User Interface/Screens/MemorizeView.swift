@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  MemorizeView.swift
 //  Memorize
 //
 //  Created by Giorgi Beriashvili on 13.09.21.

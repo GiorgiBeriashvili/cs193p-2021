@@ -8,6 +8,18 @@
 import Foundation
 import SwiftUI
 
+// MARK: - Foundation
+
+extension Array {
+    var oneAndOnly: Element? {
+        if count == 1 {
+            return first
+        } else {
+            return nil
+        }
+    }
+}
+
 // MARK: - SwiftUI
 
 extension Color {

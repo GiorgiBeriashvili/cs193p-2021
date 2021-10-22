@@ -8,22 +8,33 @@
 import SwiftUI
 
 struct CardView: View {
-    let card: MemoryGame<String>.Card
+    let card: MemorizeView.Model.Card
     let theme: AnyShapeStyle
     
+    private struct Constants {
+        static let cornerRadius: CGFloat = 20
+        static let lineWidth: CGFloat = 3
+        static let fontScale: CGFloat = 0.75
+    }
+    
+    private func fontSize(in size: CGSize) -> CGFloat {
+        min(size.height, size.width) * Constants.fontScale
+    }
+    
     var body: some View {
-        ZStack {
-            let shape = RoundedRectangle(cornerRadius: 20)
-            
-            if card.isMatched {
-                shape.opacity(0)
-            } else if card.isFaceUp {
-                shape.fill().foregroundColor(.white)
-                shape.strokeBorder(theme, lineWidth: 3)
-                Text(card.content)
-                    .font(.largeTitle)
-            } else {
-                shape.fill(theme)
+        GeometryReader { geometry in
+            ZStack {
+                let shape = RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                
+                if card.isMatched {
+                    shape.opacity(0)
+                } else if card.isFaceUp {
+                    shape.fill().foregroundColor(.white)
+                    shape.strokeBorder(theme, lineWidth: Constants.lineWidth)
+                    Text(card.content).font(.system(size: fontSize(in: geometry.size)))
+                } else {
+                    shape.fill(theme)
+                }
             }
         }
     }
@@ -39,7 +50,7 @@ struct CardView_Previews: PreviewProvider {
         
         HStack {
             CardView(
-                card: MemoryGame.Card(
+                card: MemorizeView.Model.Card(
                     id: 1,
                     content: "♠️",
                     isFaceUp: true,
@@ -50,7 +61,7 @@ struct CardView_Previews: PreviewProvider {
                 theme: AnyShapeStyle(theme)
             )
             CardView(
-                card: MemoryGame.Card(id: 1, content: "♠️"),
+                card: MemorizeView.Model.Card(id: 1, content: "♠️"),
                 theme: AnyShapeStyle(theme)
             )
         }
